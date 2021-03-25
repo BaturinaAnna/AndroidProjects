@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:gravity="center">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="5dp">
+
+        <LinearLayout
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <EditText
+                android:id="@+id/editTextTitle"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:ems="10"
+                android:inputType="text"
+                android:text="Title" />
+
+
+            <RadioGroup
+                android:id="@+id/radioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/radioHigh"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/red"
+                        android:layout_marginLeft="30dp"
+                        />
+                    <RadioButton
+                        android:id="@+id/radioMedium"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/orange"
+                        android:layout_marginLeft="30dp"
+                        />
+                    <RadioButton
+                        android:id="@+id/radioLow"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/green"
+                        android:layout_marginLeft="30dp"
+                        />
+                </LinearLayout>
+            </RadioGroup>
+
+            <EditText
+                android:id="@+id/editTextNote"
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:ems="10"
+                android:inputType="text"
+                android:text="Note" />
+
+            <Button
+                android:id="@+id/buttonAddNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add Note" />
+
+            <Button
+                android:id="@+id/buttonCancel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cancel" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+</LinearLayout>
