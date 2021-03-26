@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private FloatingActionButton button;
     private List<Notice> notices = new ArrayList<>();
+    private NoticeAdapter noticeAdapter;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -39,28 +40,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         button = findViewById(R.id.button);
         recyclerView = findViewById(R.id.recyclerViewNotices);
-        NoticeAdapter noticeAdapter = new NoticeAdapter(notices);
+        noticeAdapter = new NoticeAdapter(notices);
 
         recyclerView.setAdapter(noticeAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
-        noticeAdapter.setOnItemClickListener(new NoticeAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                Toast.makeText(getApplicationContext(), "click", Toast.LENGTH_SHORT).show();
-                Log.d("anna", notices.get(position).toString());
-            }
+
+        noticeAdapter.setOnItemClickListener(position -> {
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    notices.get(position).toString(), Toast.LENGTH_SHORT);
+            toast.show();
         });
 
-
-
-        button.setOnClickListener(v -> {
-            showPopupWindow(v);
-            NoticeAdapter noticeAdapter1 = new NoticeAdapter(notices);
-            recyclerView.setAdapter(noticeAdapter1);
-            notices.sort(Comparator.comparing(Notice::getPriority));
-            noticeAdapter1.notifyDataSetChanged();
-        });
+        button.setOnClickListener(this::showPopupWindow);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -105,11 +97,10 @@ public class MainActivity extends AppCompatActivity {
             }
             Notice notice = new Notice(editTextTitle.getText().toString(), editTextNote.getText().toString(), priority);
             notices.add(notice);
-            popupWindow.dismiss();
-            NoticeAdapter noticeAdapter1 = new NoticeAdapter(notices);
-            recyclerView.setAdapter(noticeAdapter1);
+            App.getInstance().getDatabase().noticeDao().insert(notice);
             notices.sort(Comparator.comparing(Notice::getPriority));
-            noticeAdapter1.notifyDataSetChanged();
+            noticeAdapter.notifyDataSetChanged();
+            popupWindow.dismiss();
         });
 
         buttonCancel.setOnClickListener(v -> {
