@@ -47,12 +47,81 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
 
         noticeAdapter.setOnItemClickListener(position -> {
-            Toast toast = Toast.makeText(getApplicationContext(),
-                    notices.get(position).toString(), Toast.LENGTH_SHORT);
-            toast.show();
+            showPopUpWidowEdit(this.recyclerView, position);
+        });
+
+        noticeAdapter.setOnItemLongClickListener(position -> {
+            Notice noticeToDelete = notices.get(position);
+            noticeToDelete.setId(App.getInstance().getDatabase().noticeDao().getId(noticeToDelete.info, noticeToDelete.title));
+            App.getInstance().getDatabase().noticeDao().delete(noticeToDelete);
+            notices.remove(position);
+            noticeAdapter.notifyDataSetChanged();
         });
 
         button.setOnClickListener(this::showPopupWindow);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void showPopUpWidowEdit(final View view, int position){
+        LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(view.getContext().LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.note_editor, null);
+
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.MATCH_PARENT;
+        boolean focusable = true;
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+        EditText editTextTitle = popupView.findViewById(R.id.editTextTitle);
+        EditText editTextNote = popupView.findViewById(R.id.editTextNote);
+
+        RadioButton radioButtonLow = popupView.findViewById(R.id.radioLow);
+        RadioButton radioButtonHigh = popupView.findViewById(R.id.radioHigh);
+        RadioButton radioButtonMedium = popupView.findViewById(R.id.radioMedium);
+
+        Button buttonAdd = popupView.findViewById(R.id.buttonAddNote);
+        Button buttonCancel = popupView.findViewById(R.id.buttonCancel);
+
+        editTextNote.setText(notices.get(position).getInfo());
+        editTextTitle.setText(notices.get(position).getTitle());
+
+        buttonAdd.setText("Save changes");
+
+        buttonAdd.setOnClickListener(v -> {
+            Priority priority = Priority.HIGH;
+            if (radioButtonMedium.isChecked()){
+                priority = Priority.MEDIUM;
+            } else if (radioButtonLow.isChecked()){
+                priority = Priority.LOW;
+            }
+            Notice notice = new Notice(editTextTitle.getText().toString(), editTextNote.getText().toString(), priority);
+            notices.set(position, notice);
+            App.getInstance().getDatabase().noticeDao().insert(notice);
+            notices.sort(Comparator.comparing(Notice::getPriority));
+            noticeAdapter.notifyDataSetChanged();
+            popupWindow.dismiss();
+        });
+
+        buttonCancel.setOnClickListener(v -> {
+            notices.sort(Comparator.comparing(Notice::getPriority));
+            noticeAdapter.notifyDataSetChanged();
+            popupWindow.dismiss();
+        });
+
+        radioButtonHigh.setOnClickListener(v -> {
+            radioButtonLow.setChecked(false);
+            radioButtonMedium.setChecked(false);
+        });
+
+        radioButtonMedium.setOnClickListener(v -> {
+            radioButtonLow.setChecked(false);
+            radioButtonHigh.setChecked(false);
+        });
+
+        radioButtonLow.setOnClickListener(v -> {
+            radioButtonHigh.setChecked(false);
+            radioButtonMedium.setChecked(false);
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -104,11 +173,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         buttonCancel.setOnClickListener(v -> {
-            popupWindow.dismiss();
-            NoticeAdapter noticeAdapter1 = new NoticeAdapter(notices);
-            recyclerView.setAdapter(noticeAdapter1);
             notices.sort(Comparator.comparing(Notice::getPriority));
-            noticeAdapter1.notifyDataSetChanged();
+            noticeAdapter.notifyDataSetChanged();
+            popupWindow.dismiss();
         });
 
         radioButtonHigh.setOnClickListener(v -> {

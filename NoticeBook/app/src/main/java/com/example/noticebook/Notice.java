@@ -6,7 +6,7 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-@Entity
+@Entity(tableName="notices")
 public class Notice {
     @PrimaryKey(autoGenerate = true)
     public Long id;
