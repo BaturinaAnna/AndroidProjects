@@ -106,7 +106,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.ViewHolder
                         if (position != RecyclerView.NO_POSITION) {
                             listenerLong.onItemLongClick(position);
                         }
-                        return true;
                     }
                     return true;
                 }
