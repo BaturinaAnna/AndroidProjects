@@ -5,6 +5,8 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverter;
+import androidx.room.TypeConverters;
 
 @Entity(tableName="notices")
 public class Notice {
@@ -14,7 +16,7 @@ public class Notice {
     public String title;
     @ColumnInfo(name = "info")
     public String info;
-    @Ignore
+    @TypeConverters({PriorityConverter.class})
     public Priority priority = Priority.HIGH;
 
     public Notice() {
@@ -68,6 +70,6 @@ public class Notice {
     @NonNull
     @Override
     public String toString() {
-        return "info= " + info + "title = " + title;
+        return "id=" + id + " info= " + info + " title = " + title;
     }
 }
